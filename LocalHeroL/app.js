@@ -283,7 +283,20 @@ function initAuthPage() {
       const newUser = { username: u, password: p, role, ward, metro, councillorUsername: councillorUser };
       users.push(newUser);
       LS.set("users", users);
-      alert("Signup success! Please log in.");
+      
+      // Show success message briefly
+      const successMsg = document.createElement('div');
+      successMsg.className = 'signup-success';
+      successMsg.textContent = `Account created successfully! Welcome, ${u}!`;
+      document.body.appendChild(successMsg);
+      
+      // Automatically log in the new user
+      LS.set("currentUser", newUser);
+      
+      // Redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        window.location = "dashboard.html";
+      }, 1500);
     });
   }
 }
@@ -364,7 +377,33 @@ function initDashboardPage() {
   }
 
   if (visibleIssues.length === 0) {
-    listEl.innerHTML = '<p class="muted">No issues found.</p>';
+    if (user.role === "community") {
+      listEl.innerHTML = `
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+          <h3>Welcome to Local Hero Lite! 🎉</h3>
+          <p class="muted">You haven't reported any issues yet.</p>
+          <p>Start by reporting your first community issue using the button above.</p>
+          <div style="margin-top: 20px;">
+            <a href="report.html" class="btn primary">Report Your First Issue</a>
+          </div>
+        </div>`;
+    } else if (user.role === "councillor") {
+      listEl.innerHTML = `
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+          <h3>Welcome Councillor! 🏛️</h3>
+          <p class="muted">No issues have been reported in Ward ${user.ward} yet.</p>
+          <p>When community members report issues, they will appear here for you to review and coordinate.</p>
+        </div>`;
+    } else if (user.role === "municipality") {
+      listEl.innerHTML = `
+        <div class="card" style="text-align: center; padding: 40px 20px;">
+          <h3>Welcome Municipality Staff! 🏢</h3>
+          <p class="muted">No issues have been reported in ${user.metro} yet.</p>
+          <p>When councillors escalate issues, they will appear here for you to manage and resolve.</p>
+        </div>`;
+    } else {
+      listEl.innerHTML = '<p class="muted">No issues found.</p>';
+    }
     return;
   }
 

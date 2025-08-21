@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup Flow Demo</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo small">🌍</div>
+      <div>
+        <h3>Local Hero Lite - Signup Demo</h3>
+        <p class="muted">See the new automatic login flow</p>
+      </div>
+    </div>
+    <nav class="topbar-right">
+      <a class="btn ghost" href="index.html">Back to Login</a>
+      <a class="btn ghost" href="test-dashboard.html">Test Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>🎯 New Signup Flow</h2>
+      <p>After creating an account, users are automatically logged in and redirected to their role-specific dashboard.</p>
+      
+      <div class="card-grid">
+        <div class="card">
+          <h3>👥 Community Member</h3>
+          <p>Creates account → Auto-login → Dashboard with "Report Issue" button</p>
+          <p class="muted">Sees: Welcome message, report button, empty issue list initially</p>
+        </div>
+        
+        <div class="card">
+          <h3>🏛️ Councillor</h3>
+          <p>Creates account → Auto-login → Dashboard showing ward issues</p>
+          <p class="muted">Sees: Welcome message, issues in their ward, chat functionality</p>
+        </div>
+        
+        <div class="card">
+          <h3>🏢 Municipality Staff</h3>
+          <p>Creates account → Auto-login → Dashboard with all metro issues</p>
+          <p class="muted">Sees: Welcome message, all issues, status change options</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🚀 Try It Out!</h3>
+      <p>Go to the <a href="index.html" class="btn ghost">login page</a> and create a new account with any role to see the automatic redirect in action!</p>
+      
+      <div style="margin-top: 20px;">
+        <h4>Sample Test Accounts:</h4>
+        <ul>
+          <li><strong>Community:</strong> thandi (1234) - Ward 12</li>
+          <li><strong>Councillor:</strong> c_khumalo (1234) - Ward 12</li>
+          <li><strong>Municipality:</strong> m_staff (1234) - eThekwini</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✨ What Happens After Signup</h3>
+      <ol>
+        <li>User fills out signup form with role, ward, metro, etc.</li>
+        <li>Account is created and stored in LocalStorage</li>
+        <li><strong>NEW:</strong> User is automatically logged in</li>
+        <li><strong>NEW:</strong> Success message appears briefly</li>
+        <li><strong>NEW:</strong> User is redirected to dashboard.html</li>
+        <li>Dashboard shows role-specific content and welcome message</li>
+        <li>If no issues exist, shows encouraging welcome message</li>
+      </ol>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

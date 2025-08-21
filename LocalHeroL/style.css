@@ -116,3 +116,26 @@ label{font-weight:600;margin-top:8px;margin-bottom:6px;display:block}
 /* Status update messages */
 .msg[data-status-update="true"]{background:#065f46;border-color:#10b981;color:#d1fae5}
 .msg[data-status-update="true"] .meta{color:#6ee7b7}
+
+/* Signup success message */
+.signup-success{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#10b981;
+  color:white;
+  padding:20px 30px;
+  border-radius:10px;
+  font-weight:600;
+  z-index:1000;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+  animation:fadeInOut 1.5s ease-in-out;
+}
+
+@keyframes fadeInOut{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.8)}
+}
