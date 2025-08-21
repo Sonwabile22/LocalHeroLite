@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Hero Lite</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+    h1 { color: #2c3e50; }
+    form, .issues { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
+    input, textarea, select, button { margin: 8px 0; padding: 10px; width: 100%; }
+    button { background: #27ae60; color: white; border: none; cursor: pointer; }
+    button:hover { background: #2ecc71; }
+    .issue { border-bottom: 1px solid #ddd; padding: 10px 0; }
+    .resolved { text-decoration: line-through; color: gray; }
+  </style>
+</head>
+<body>
+  <h1>🌍 Local Hero Lite</h1>
+  <p>Report and track community issues easily.</p>
+
+  <form id="issueForm">
+    <input type="text" id="title" placeholder="Issue Title" required>
+    <textarea id="description" placeholder="Describe the issue" required></textarea>
+    <select id="category">
+      <option>Pothole</option>
+      <option>Water Leak</option>
+      <option>Streetlight</option>
+      <option>Other</option>
+    </select>
+    <button type="submit">Submit Issue</button>
+  </form>
+
+  <div class="issues">
+    <h2>Reported Issues</h2>
+    <div id="issueList"></div>
+  </div>
+
+  <script>
+    // Load issues from localStorage
+    let issues = JSON.parse(localStorage.getItem("issues")) || [];
+
+    function renderIssues() {
+      const issueList = document.getElementById("issueList");
+      issueList.innerHTML = "";
+      issues.forEach((issue, index) => {
+        issueList.innerHTML += `
+          <div class="issue ${issue.status === 'Resolved' ? 'resolved' : ''}">
+            <h3>${issue.title}</h3>
+            <p>${issue.description}</p>
+            <p><b>Category:</b> ${issue.category}</p>
+            <p><b>Status:</b> ${issue.status}</p>
+            ${issue.status === 'Pending' ? 
+              `<button onclick="resolveIssue(${index})">Mark Resolved</button>` 
+              : ''}
+          </div>`;
+      });
+    }
+
+    function resolveIssue(index) {
+      issues[index].status = "Resolved";
+      localStorage.setItem("issues", JSON.stringify(issues));
+      renderIssues();
+    }
+
+    document.getElementById("issueForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const newIssue = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        category: document.getElementById("category").value,
+        status: "Pending"
+      };
+      issues.push(newIssue);
+      localStorage.setItem("issues", JSON.stringify(issues));
+      e.target.reset();
+      renderIssues();
+    });
+
+    renderIssues();
+  </script>
+</body>
+</html>
