@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report Issue — Local Hero Lite</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo small">📝</div>
+      <div>
+        <h3>Report New Issue</h3>
+        <p class="muted">Community members only</p>
+      </div>
+    </div>
+    <nav class="topbar-right">
+      <a class="btn ghost" href="dashboard.html">Back to Dashboard</a>
+      <button class="btn danger" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="card form">
+      <form id="reportForm">
+        <label>Title</label>
+        <input id="title" type="text" placeholder="Short summary (e.g. Large pothole on Main St)" required />
+
+        <label>Description</label>
+        <textarea id="description" placeholder="Describe the issue in detail..." required></textarea>
+
+        <label>Category</label>
+        <select id="category" required>
+          <option>Pothole</option>
+          <option>Water Leak</option>
+          <option>Streetlight</option>
+          <option>Illegal Dumping</option>
+          <option>Other</option>
+        </select>
+
+        <button class="btn accent" type="submit">Submit Issue</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

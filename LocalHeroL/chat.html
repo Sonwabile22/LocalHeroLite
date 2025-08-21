@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Issue Chat — Local Hero Lite</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo small">💬</div>
+      <div>
+        <h3 id="chatTitle">Chat</h3>
+        <p class="muted">Community ↔ Councillor ↔ Municipality</p>
+      </div>
+    </div>
+    <nav class="topbar-right">
+      <a class="btn ghost" href="dashboard.html">Back to Dashboard</a>
+      <button class="btn danger" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div id="issueMeta" class="card"></div>
+
+    <div class="card chat">
+      <div id="chatStream" class="chat-stream"></div>
+      <form id="chatForm" class="chat-input">
+        <input id="chatMessage" type="text" placeholder="Type a message..." autocomplete="off" required />
+        <button class="btn primary" type="submit">Send</button>
+      </form>
+      <p class="help">Protocol: Community ↔ Councillor, Councillor ↔ Municipality. Municipality and Community should communicate via the Councillor.</p>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Local Hero Lite — Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body class="bg">
+  <div class="container auth">
+    <div class="brand">
+      <div class="logo">🌍</div>
+      <h1>Local Hero Lite</h1>
+      <p class="muted">Community Issue Reporting (Web)</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- LOGIN -->
+      <div class="card">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label>Username</label>
+          <input type="text" id="loginUser" placeholder="e.g. thandi" required />
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required />
+          <button type="submit" class="btn primary w100">Login</button>
+          <p class="help">Use sample users: <b>thandi</b>, <b>c_khumalo</b>, <b>m_staff</b> (password: <b>1234</b>)</p>
+        </form>
+      </div>
+
+      <!-- SIGN UP -->
+      <div class="card">
+        <h2>Sign Up</h2>
+        <form id="signupForm">
+          <label>Username</label>
+          <input type="text" id="signupUser" placeholder="Choose a username" required />
+          <label>Password</label>
+          <input type="password" id="signupPass" placeholder="Create a password" required />
+          <label>Role</label>
+          <select id="role" required>
+            <option value="community">Community Member</option>
+            <option value="councillor">Councillor</option>
+            <option value="municipality">Municipality Staff</option>
+          </select>
+
+          <div id="wardRow" class="conditional">
+            <label>Ward</label>
+            <input type="text" id="ward" placeholder="e.g. 12" />
+          </div>
+
+          <label>Metro</label>
+          <input type="text" id="metro" placeholder="e.g. eThekwini" required />
+
+          <div id="councillorRow" class="conditional">
+            <label>Your Councillor Username</label>
+            <input type="text" id="councillorUser" placeholder="e.g. c_khumalo" />
+          </div>
+
+          <button type="submit" class="btn accent w100">Create Account</button>
+          <p class="help">Community & Councillor require <b>Ward + Metro</b>. Community also needs <b>Councillor username</b>. Municipality requires <b>Metro</b> only.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

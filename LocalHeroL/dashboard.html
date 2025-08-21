@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Local Hero Lite — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body class="bg">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo small">🌍</div>
+      <div>
+        <h3>Local Hero Lite</h3>
+        <p id="userBadge" class="muted"></p>
+      </div>
+    </div>
+    <nav class="topbar-right">
+      <a class="btn ghost" href="dashboard.html">Dashboard</a>
+      <a id="reportLink" class="btn ghost" href="report.html" style="display:none;">Report Issue</a>
+      <button class="btn danger" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div id="dashIntro" class="intro card"></div>
+
+    <section class="card">
+      <div class="card-header">
+        <h2 id="listTitle">Issues</h2>
+        <div class="filters">
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option>Not Started</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+          <input id="searchInput" type="text" placeholder="Search title/description..." />
+        </div>
+      </div>
+      <div id="issueList" class="grid"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
