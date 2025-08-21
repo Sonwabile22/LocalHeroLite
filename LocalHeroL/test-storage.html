@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test LocalStorage</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    .card { background: white; border: 1px solid #ddd; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    button:hover { background: #0056b3; }
+    .success { background: #28a745; }
+    .danger { background: #dc3545; }
+    pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    .status { padding: 5px 10px; border-radius: 3px; color: white; font-size: 12px; margin: 5px; display: inline-block; }
+    .status.success { background: #28a745; }
+    .status.error { background: #dc3545; }
+    .status.warning { background: #ffc107; color: #212529; }
+  </style>
+</head>
+<body>
+  <h1>🧪 LocalStorage Test</h1>
+  
+  <div class="card">
+    <h3>Test Actions</h3>
+    <button onclick="testBasicStorage()">Test Basic Storage</button>
+    <button onclick="testAppJS()" class="success">Load & Test app.js</button>
+    <button onclick="clearStorage()" class="danger">Clear Storage</button>
+    <button onclick="showStorage()">Show Current Storage</button>
+  </div>
+
+  <div class="card">
+    <h3>Test Results</h3>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    function testBasicStorage() {
+      const results = document.getElementById('results');
+      results.innerHTML = '<p>Testing basic localStorage functionality...</p>';
+      
+      try {
+        // Test basic localStorage
+        localStorage.setItem('test', 'hello');
+        const testValue = localStorage.getItem('test');
+        localStorage.removeItem('test');
+        
+        if (testValue === 'hello') {
+          results.innerHTML += '<span class="status success">✓ Basic localStorage working</span><br>';
+        } else {
+          results.innerHTML += '<span class="status error">✗ Basic localStorage failed</span><br>';
+        }
+        
+        // Test JSON parsing
+        const testObj = { test: 'data' };
+        localStorage.setItem('testObj', JSON.stringify(testObj));
+        const retrievedObj = JSON.parse(localStorage.getItem('testObj'));
+        localStorage.removeItem('testObj');
+        
+        if (retrievedObj.test === 'data') {
+          results.innerHTML += '<span class="status success">✓ JSON parsing working</span><br>';
+        } else {
+          results.innerHTML += '<span class="status error">✗ JSON parsing failed</span><br>';
+        }
+        
+      } catch (error) {
+        results.innerHTML += `<span class="status error">✗ Error: ${error.message}</span><br>`;
+      }
+    }
+
+    function testAppJS() {
+      const results = document.getElementById('results');
+      results.innerHTML = '<p>Loading app.js...</p>';
+      
+      const script = document.createElement('script');
+      script.src = 'app.js';
+      script.onload = function() {
+        results.innerHTML += '<span class="status success">✓ app.js loaded successfully</span><br>';
+        
+        // Test if LS object exists
+        if (typeof LS !== 'undefined') {
+          results.innerHTML += '<span class="status success">✓ LS object created</span><br>';
+          
+          // Test LS functions
+          try {
+            LS.set('test', 'value');
+            const retrieved = LS.get('test');
+            LS.set('test', null); // Clear test
+            
+            if (retrieved === 'value') {
+              results.innerHTML += '<span class="status success">✓ LS.get and LS.set working</span><br>';
+            } else {
+              results.innerHTML += '<span class="status error">✗ LS.get and LS.set failed</span><br>';
+            }
+          } catch (error) {
+            results.innerHTML += `<span class="status error">✗ LS functions error: ${error.message}</span><br>`;
+          }
+        } else {
+          results.innerHTML += '<span class="status error">✗ LS object not found</span><br>';
+        }
+        
+        // Check if sample data was created
+        setTimeout(() => {
+          const users = localStorage.getItem('users');
+          const issues = localStorage.getItem('issues');
+          const chats = localStorage.getItem('chats');
+          
+          if (users) {
+            const userCount = JSON.parse(users).length;
+            results.innerHTML += `<span class="status success">✓ Users created: ${userCount}</span><br>`;
+          } else {
+            results.innerHTML += '<span class="status warning">⚠ No users found</span><br>';
+          }
+          
+          if (issues) {
+            const issueCount = JSON.parse(issues).length;
+            results.innerHTML += `<span class="status success">✓ Issues created: ${issueCount}</span><br>`;
+          } else {
+            results.innerHTML += '<span class="status warning">⚠ No issues found</span><br>';
+          }
+          
+          if (chats) {
+            const chatCount = Object.keys(JSON.parse(chats)).length;
+            results.innerHTML += `<span class="status success">✓ Chats created: ${chatCount}</span><br>`;
+          } else {
+            results.innerHTML += '<span class="status warning">⚠ No chats found</span><br>';
+          }
+        }, 100);
+        
+      };
+      script.onerror = function() {
+        results.innerHTML += '<span class="status error">✗ Failed to load app.js</span><br>';
+      };
+      document.head.appendChild(script);
+    }
+
+    function clearStorage() {
+      localStorage.clear();
+      document.getElementById('results').innerHTML = '<span class="status warning">Storage cleared</span>';
+    }
+
+    function showStorage() {
+      const results = document.getElementById('results');
+      const keys = Object.keys(localStorage);
+      
+      if (keys.length === 0) {
+        results.innerHTML = '<p>No data in localStorage</p>';
+        return;
+      }
+      
+      let html = '<h4>Current Storage Keys:</h4>';
+      keys.forEach(key => {
+        try {
+          const value = localStorage.getItem(key);
+          const parsed = JSON.parse(value);
+          html += `<p><strong>${key}:</strong> <pre>${JSON.stringify(parsed, null, 2)}</pre></p>`;
+        } catch (error) {
+          html += `<p><strong>${key}:</strong> <pre>${value}</pre> (raw)</p>`;
+        }
+      });
+      
+      results.innerHTML = html;
+    }
+
+    // Auto-run basic test
+    window.onload = function() {
+      testBasicStorage();
+    };
+  </script>
+</body>
+</html>

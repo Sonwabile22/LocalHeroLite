@@ -73,3 +73,46 @@ label{font-weight:600;margin-top:8px;margin-bottom:6px;display:block}
 .intro{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .intro h2{margin:0}
 .conditional{display:none}
+
+/* Conditional field styling */
+.conditional.show{display:block}
+.conditional label{margin-top:16px}
+
+/* Ensure conditional fields are visible when needed */
+#wardRow, #councillorRow { display: none; }
+#wardRow.show, #councillorRow.show { display: block; }
+
+/* Status indicators */
+.status-not-started{color:#f59e0b;font-weight:600}
+.status-in-progress{color:#3b82f6;font-weight:600}
+.status-resolved{color:#10b981;font-weight:600}
+
+/* Dashboard improvements */
+#dashboardContent h3{margin-bottom:8px}
+#dashboardContent .muted{margin-bottom:16px}
+#dashboardContent .btn{margin-bottom:20px;display:inline-block}
+
+/* Issue card improvements */
+#issueList .card{margin-bottom:16px}
+#issueList .card h4{margin-top:0;margin-bottom:12px;color:var(--text)}
+#issueList .card p{margin:8px 0;line-height:1.5}
+#issueList .card .btn{margin-top:12px;margin-bottom:0}
+
+/* Issue header with unread badge */
+.issue-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.issue-header h4{margin:0;flex:1}
+.unread-badge{background:var(--danger);color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;min-width:20px}
+
+/* Issue actions */
+.issue-actions{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+
+/* Chat improvements */
+.msg{margin-bottom:16px;padding:12px;border-radius:8px;background:var(--ghost);border:1px solid var(--ring)}
+.msg.unread{background:#1e3a8a;border-color:#3b82f6}
+.msg p{margin:0 0 8px 0}
+.msg .meta{color:var(--muted);font-size:12px}
+.msg.unread .meta{color:#93c5fd}
+
+/* Status update messages */
+.msg[data-status-update="true"]{background:#065f46;border-color:#10b981;color:#d1fae5}
+.msg[data-status-update="true"] .meta{color:#6ee7b7}

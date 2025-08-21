@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Debug LocalStorage</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    .card { background: white; border: 1px solid #ddd; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    button:hover { background: #0056b3; }
+    .danger { background: #dc3545; }
+    .danger:hover { background: #c82333; }
+    .success { background: #28a745; }
+    .success:hover { background: #218838; }
+    pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    .status { padding: 5px 10px; border-radius: 3px; color: white; font-size: 12px; }
+    .status.success { background: #28a745; }
+    .status.error { background: #dc3545; }
+    .status.warning { background: #ffc107; color: #212529; }
+  </style>
+</head>
+<body>
+  <h1>🔍 LocalStorage Debug Tool</h1>
+  
+  <div class="card">
+    <h3>Actions</h3>
+    <button onclick="loadAppJS()">Load app.js</button>
+    <button onclick="forceSeedData()" class="success">Force Seed Data</button>
+    <button onclick="clearAllData()" class="danger">Clear All Data</button>
+    <button onclick="refreshData()">Refresh Display</button>
+  </div>
+
+  <div class="card">
+    <h3>Current Status</h3>
+    <div id="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Users Data</h3>
+    <div id="usersData"></div>
+  </div>
+
+  <div class="card">
+    <h3>Issues Data</h3>
+    <div id="issuesData"></div>
+  </div>
+
+  <div class="card">
+    <h3>Chats Data</h3>
+    <div id="chatsData"></div>
+  </div>
+
+  <div class="card">
+    <h3>Test Login</h3>
+    <div>
+      <p><strong>Sample Users:</strong></p>
+      <ul>
+        <li><strong>thandi</strong> (community) - Ward 12, eThekwini</li>
+        <li><strong>c_khumalo</strong> (councillor) - Ward 12, eThekwini</li>
+        <li><strong>m_staff</strong> (municipality) - eThekwini</li>
+      </ul>
+      <p><strong>Password for all:</strong> 1234</p>
+    </div>
+  </div>
+
+  <script>
+    // Load app.js to get the seed data function
+    function loadAppJS() {
+      const script = document.createElement('script');
+      script.src = 'app.js';
+      script.onload = function() {
+        document.getElementById('status').innerHTML = '<span class="status success">app.js loaded successfully</span>';
+        refreshData();
+      };
+      script.onerror = function() {
+        document.getElementById('status').innerHTML = '<span class="status error">Failed to load app.js</span>';
+      };
+      document.head.appendChild(script);
+    }
+
+    function forceSeedData() {
+      if (typeof LS !== 'undefined') {
+        localStorage.clear();
+        location.reload();
+      } else {
+        alert('Please load app.js first');
+      }
+    }
+
+    function clearAllData() {
+      localStorage.clear();
+      refreshData();
+      document.getElementById('status').innerHTML = '<span class="status warning">All data cleared</span>';
+    }
+
+    function refreshData() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const issues = JSON.parse(localStorage.getItem('issues') || '[]');
+      const chats = JSON.parse(localStorage.getItem('chats') || '{}');
+
+      // Update status
+      const statusEl = document.getElementById('status');
+      statusEl.innerHTML = `
+        <span class="status ${users.length > 0 ? 'success' : 'warning'}">Users: ${users.length}</span>
+        <span class="status ${issues.length > 0 ? 'success' : 'warning'}">Issues: ${issues.length}</span>
+        <span class="status ${Object.keys(chats).length > 0 ? 'success' : 'warning'}">Chats: ${Object.keys(chats).length}</span>
+      `;
+
+      // Display users
+      document.getElementById('usersData').innerHTML = users.length > 0 ? 
+        `<pre>${JSON.stringify(users, null, 2)}</pre>` : 
+        '<p>No users found</p>';
+
+      // Display issues
+      document.getElementById('issuesData').innerHTML = issues.length > 0 ? 
+        `<pre>${JSON.stringify(issues, null, 2)}</pre>` : 
+        '<p>No issues found</p>';
+
+      // Display chats
+      document.getElementById('chatsData').innerHTML = Object.keys(chats).length > 0 ? 
+        `<pre>${JSON.stringify(chats, null, 2)}</pre>` : 
+        '<p>No chats found</p>';
+    }
+
+    // Auto-load app.js and refresh data
+    window.onload = function() {
+      loadAppJS();
+    };
+  </script>
+</body>
+</html>

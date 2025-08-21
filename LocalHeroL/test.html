@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Sample Data</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Sample Data Test</h1>
+  
+  <div class="card">
+    <h3>Test Actions</h3>
+    <button onclick="testSeedData()">Test Seed Data</button>
+    <button onclick="clearData()">Clear All Data</button>
+    <button onclick="showData()">Show Current Data</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script src="app.js"></script>
+  <script>
+    function testSeedData() {
+      // Force seed data to run
+      localStorage.clear();
+      location.reload();
+    }
+
+    function clearData() {
+      localStorage.clear();
+      showData();
+    }
+
+    function showData() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const issues = JSON.parse(localStorage.getItem('issues') || '[]');
+      const chats = JSON.parse(localStorage.getItem('chats') || '{}');
+      
+      document.getElementById('results').innerHTML = `
+        <div class="card">
+          <h3>Users (${users.length})</h3>
+          <pre>${JSON.stringify(users, null, 2)}</pre>
+        </div>
+        <div class="card">
+          <h3>Issues (${issues.length})</h3>
+          <pre>${JSON.stringify(issues, null, 2)}</pre>
+        </div>
+        <div class="card">
+          <h3>Chats (${Object.keys(chats).length})</h3>
+          <pre>${JSON.stringify(chats, null, 2)}</pre>
+        </div>
+      `;
+    }
+
+    // Show data on page load
+    setTimeout(showData, 100);
+  </script>
+</body>
+</html>

@@ -19,27 +19,13 @@
       <a class="btn ghost" href="dashboard.html">Dashboard</a>
       <a id="reportLink" class="btn ghost" href="report.html" style="display:none;">Report Issue</a>
       <button class="btn danger" onclick="logout()">Logout</button>
+      <button class="btn ghost" onclick="resetSampleData()" style="font-size: 12px; padding: 6px 10px;">Reset Data</button>
+      <button class="btn ghost" onclick="clearCorruptedData()" style="font-size: 12px; padding: 6px 10px;">Clear Corrupted</button>
     </nav>
   </header>
 
   <main class="container">
-    <div id="dashIntro" class="intro card"></div>
-
-    <section class="card">
-      <div class="card-header">
-        <h2 id="listTitle">Issues</h2>
-        <div class="filters">
-          <select id="statusFilter">
-            <option value="">All Statuses</option>
-            <option>Not Started</option>
-            <option>In Progress</option>
-            <option>Resolved</option>
-          </select>
-          <input id="searchInput" type="text" placeholder="Search title/description..." />
-        </div>
-      </div>
-      <div id="issueList" class="grid"></div>
-    </section>
+    <div id="dashboardContent"></div>
   </main>
 
   <script src="app.js"></script>

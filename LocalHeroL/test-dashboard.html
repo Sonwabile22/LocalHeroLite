@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    .card { background: white; border: 1px solid #ddd; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    button:hover { background: #0056b3; }
+    .success { background: #28a745; }
+    .danger { background: #dc3545; }
+    .warning { background: #ffc107; color: #212529; }
+    .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; }
+    .user-test { border-left: 4px solid #007bff; padding-left: 15px; margin: 10px 0; }
+    .unread-badge { background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Dashboard Test Page</h1>
+  
+  <div class="test-section">
+    <h3>Test Different User Roles</h3>
+    <div class="user-test">
+      <h4>Community Member Test</h4>
+      <p>Login as: <strong>thandi</strong> (password: 1234)</p>
+      <p>Should see: Issues created by thandi, chat with councillor</p>
+      <button onclick="testUser('thandi', '1234')" class="success">Test Community Login</button>
+    </div>
+    
+    <div class="user-test">
+      <h4>Councillor Test</h4>
+      <p>Login as: <strong>c_khumalo</strong> (password: 1234)</p>
+      <p>Should see: All issues in Ward 12, chat with community and municipality</p>
+      <button onclick="testUser('c_khumalo', '1234')" class="success">Test Councillor Login</button>
+    </div>
+    
+    <div class="user-test">
+      <h4>Municipality Staff Test</h4>
+      <p>Login as: <strong>m_staff</strong> (password: 1234)</p>
+      <p>Should see: All issues in eThekwini, ability to change status</p>
+      <button onclick="testUser('m_staff', '1234')" class="success">Test Municipality Login</button>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h3>Sample Data Verification</h3>
+    <button onclick="showSampleData()" class="warning">Show Sample Data</button>
+    <button onclick="clearAllData()" class="danger">Clear All Data</button>
+    <div id="dataDisplay"></div>
+  </div>
+
+  <div class="test-section">
+    <h3>Expected Features</h3>
+    <ul>
+      <li>✅ 7 sample issues with different categories and statuses</li>
+      <li>✅ Unread message indicators on dashboard</li>
+      <li>✅ Chat functionality between community ↔ councillor ↔ municipality</li>
+      <li>✅ Municipality staff can change issue status</li>
+      <li>✅ Status updates appear in chat</li>
+      <li>✅ Role-based issue filtering</li>
+      <li>✅ Unread message counts in user badge</li>
+    </ul>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function testUser(username, password) {
+      // Simulate login
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.username === username && u.password === password);
+      
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        alert(`Logged in as ${username}. Redirecting to dashboard...`);
+        window.location.href = 'dashboard.html';
+      } else {
+        alert('User not found. Please ensure sample data is loaded.');
+      }
+    }
+
+    function showSampleData() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const issues = JSON.parse(localStorage.getItem('issues') || '[]');
+      const chats = JSON.parse(localStorage.getItem('chats') || {});
+      
+      document.getElementById('dataDisplay').innerHTML = `
+        <h4>Current Data:</h4>
+        <p><strong>Users:</strong> ${users.length} (${users.map(u => u.username).join(', ')})</p>
+        <p><strong>Issues:</strong> ${issues.length}</p>
+        <p><strong>Chats:</strong> ${Object.keys(chats).length}</p>
+        
+        <h4>Sample Issues:</h4>
+        ${issues.map(issue => `
+          <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;">
+            <strong>${issue.title}</strong> - ${issue.status}<br>
+            Ward: ${issue.ward}, Metro: ${issue.metro}<br>
+            Created by: ${issue.createdBy}<br>
+            Unread: Community(${issue.unreadCount?.community || 0}), 
+                    Councillor(${issue.unreadCount?.councillor || 0}), 
+                    Municipality(${issue.unreadCount?.municipality || 0})
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function clearAllData() {
+      if (confirm('Are you sure you want to clear all data?')) {
+        localStorage.clear();
+        alert('All data cleared. Refresh the page to reload sample data.');
+        location.reload();
+      }
+    }
+
+    // Auto-show data on page load
+    window.onload = function() {
+      setTimeout(showSampleData, 500);
+    };
+  </script>
+</body>
+</html>
