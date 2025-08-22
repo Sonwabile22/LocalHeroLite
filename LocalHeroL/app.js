@@ -27,11 +27,15 @@ const LS = {
 // ------------------------------
 (function seedData() {
   try {
+    // Check if this is the first time the app is being used
+    const isFirstTime = !LS.get("appInitialized");
+    
+    if (isFirstTime) {
+      console.log("First time app initialization - seeding sample data...");
+      
     const users = LS.get("users") || [];
     const issues = LS.get("issues") || [];
     const chats = LS.get("chats") || {};
-
-    console.log("Seeding data - Current state:", { users: users.length, issues: issues.length, chats: Object.keys(chats).length });
 
     if (users.length === 0) {
       console.log("Seeding users...");
@@ -142,6 +146,9 @@ const LS = {
       ];
       LS.set("issues", sampleIssues);
 
+        // Only create sample chats if chats are completely empty
+        if (Object.keys(chats).length === 0) {
+          console.log("Seeding sample chats...");
       chats[sampleIssues[0].id] = [
         { sender: "thandi", role: "community", text: "Hi Councillor, please help with this pothole.", ts: now - 19000, read: true },
         { sender: "c_khumalo", role: "councillor", text: "Thanks, I'll notify the municipality team.", ts: now - 18500, read: true },
@@ -175,15 +182,21 @@ const LS = {
         { sender: "thandi", role: "community", text: "Garbage collection was missed this week in our area.", ts: now - 300, read: true },
         { sender: "c_khumalo", role: "councillor", text: "I'll contact waste management to arrange pickup.", ts: now - 200, read: false }
       ];
-
       LS.set("chats", chats);
     }
+      }
 
-    console.log("Seeding complete - Final state:", { 
+      // Mark the app as initialized so we don't seed again
+      LS.set("appInitialized", true);
+
+      console.log("First-time seeding complete - Final state:", { 
       users: (LS.get("users") || []).length, 
       issues: (LS.get("issues") || []).length, 
       chats: Object.keys(LS.get("chats") || {}).length 
     });
+    } else {
+      console.log("App already initialized - skipping sample data seeding");
+    }
     
     // Ensure chats is properly set even if there was an error
     const finalChats = LS.get("chats");
@@ -312,6 +325,9 @@ function initDashboardPage() {
 
   const issues = LS.get("issues") || [];
   console.log("All issues:", issues);
+  
+  // Ensure all issues have proper unread count structure
+  ensureUnreadCountStructure(issues);
 
   // Update user badge
   const userBadge = document.getElementById("userBadge");
@@ -505,6 +521,7 @@ function initReportPage() {
         (u) => u.role === "councillor" && u.ward === user.ward
       )?.username,
       createdAt: id,
+      unreadCount: { community: 0, councillor: 1, municipality: 1 }
     };
     issues.push(newIssue);
     LS.set("issues", issues);
@@ -527,34 +544,125 @@ function initChatPage() {
   const chats = LS.get("chats") || {};
   if (!chats[issueId]) chats[issueId] = [];
 
-  const chatBox = document.getElementById("chatBox");
+  const chatStream = document.getElementById("chatStream");
+  const liveChatMessages = document.getElementById("liveChatMessages");
   
-  function render() {
-    chatBox.innerHTML = chats[issueId]
-      .map(
-        (m) => {
-          const isUnread = !m.read && m.sender !== user.username;
-          const unreadClass = isUnread ? 'unread' : '';
-          const statusUpdateAttr = m.isStatusUpdate ? 'data-status-update="true"' : '';
-          
-          return `<div class="msg ${unreadClass}" ${statusUpdateAttr}>
-            <p><b>${m.sender} (${m.role}):</b> ${m.text}</p>
-            <small class="meta">${new Date(m.ts).toLocaleString()}</small>
-          </div>`;
-        }
-      )
-      .join("");
+  // Reset unread count for current user when they open the chat
+  resetUnreadCountForUser(issueId, user.username);
+  
+  // Load and display issue metadata
+  loadIssueMetadata(issueId);
+  
+  // Show sample chats and live messages
+  showSampleChat(issueId);
+  renderLiveMessages();
+  
+
+  
+  function renderLiveMessages() {
+    if (chats[issueId] && chats[issueId].length > 0) {
+      liveChatMessages.innerHTML = chats[issueId]
+        .map(
+          (m) => {
+            const isUnread = !m.read && m.sender !== user.username;
+            const unreadClass = isUnread ? 'unread' : '';
+            const statusUpdateAttr = m.isStatusUpdate ? 'data-status-update="true"' : '';
+            const msgClass = m.role === 'community' ? 'community' : m.role === 'councillor' ? 'councillor' : 'municipality';
+            
+            return `<div class="live-message ${msgClass} ${unreadClass}" ${statusUpdateAttr}>
+              <div class="msg-header">
+                <span class="sender">${m.sender}</span>
+                <span class="role">${m.role}</span>
+                <span class="time">${new Date(m.ts).toLocaleString()}</span>
+              </div>
+              <div class="msg-content">${m.text}</div>
+            </div>`;
+          }
+        )
+        .join("");
+    } else {
+      liveChatMessages.innerHTML = `
+        <div style="text-align: center; color: var(--muted); padding: 20px;">
+          <p>💬 No live messages yet. Start the conversation!</p>
+        </div>
+      `;
+    }
     
     // Mark messages as read for current user
     markMessagesAsRead(issueId, user.username);
+    
+    // Scroll to bottom of live messages
+    liveChatMessages.scrollTop = liveChatMessages.scrollHeight;
+  }
+  
+  function loadIssueMetadata(issueId) {
+    const issues = LS.get("issues") || [];
+    const issue = issues.find(i => i.id == issueId);
+    
+    if (issue) {
+      document.getElementById("issueTitle").textContent = issue.title;
+      document.getElementById("issueDescription").textContent = issue.description;
+      document.getElementById("issueCategory").textContent = issue.category;
+      document.getElementById("issueWard").textContent = issue.ward;
+      document.getElementById("issueMetro").textContent = issue.metro;
+      document.getElementById("issueReporter").textContent = issue.createdBy;
+      
+      // Set status badge
+      const statusBadge = document.getElementById("issueStatus");
+      statusBadge.textContent = issue.status;
+      statusBadge.className = `status-badge status-${issue.status.toLowerCase().replace(' ', '-')}`;
+    }
+  }
+  
+  function showSampleChat(issueId) {
+    const issues = LS.get("issues") || [];
+    const issue = issues.find(i => i.id == issueId);
+    
+    if (issue) {
+      // Map issue category to sample chat type
+      let chatType = 'general';
+      if (issue.category.toLowerCase().includes('pothole')) chatType = 'pothole';
+      else if (issue.category.toLowerCase().includes('streetlight')) chatType = 'streetlight';
+      else if (issue.category.toLowerCase().includes('dumping')) chatType = 'dumping';
+      else if (issue.category.toLowerCase().includes('water')) chatType = 'water';
+      else if (issue.category.toLowerCase().includes('playground') || issue.category.toLowerCase().includes('safety')) chatType = 'playground';
+      else if (issue.category.toLowerCase().includes('traffic')) chatType = 'traffic';
+      else if (issue.category.toLowerCase().includes('garbage') || issue.category.toLowerCase().includes('waste')) chatType = 'garbage';
+      
+      // Show the appropriate sample chat
+      const sampleChats = document.querySelectorAll('.sample-chat');
+      sampleChats.forEach(chat => {
+        chat.classList.remove('active');
+        if (chat.dataset.issueType === chatType) {
+          chat.classList.add('active');
+          chatStream.innerHTML = chat.innerHTML;
+        }
+      });
+      
+      // If no specific chat type found, show a general one
+      if (!document.querySelector('.sample-chat.active')) {
+        chatStream.innerHTML = `
+          <div class="chat-placeholder">
+            <div class="placeholder-icon">💬</div>
+            <p>Sample conversations for this issue type.</p>
+            <p class="muted">Below you can send live messages to other users.</p>
+          </div>
+        `;
+      }
+    }
   }
   
   function markMessagesAsRead(issueId, username) {
     const issues = LS.get("issues") || [];
     const issue = issues.find(i => i.id == issueId);
     if (issue && issue.unreadCount) {
-      issue.unreadCount[username] = 0;
+      // Get the user's role to properly reset the unread count
+      const users = LS.get("users") || [];
+      const user = users.find(u => u.username === username);
+      if (user && user.role) {
+        issue.unreadCount[user.role] = 0;
       LS.set("issues", issues);
+      }
     }
   }
   
@@ -580,7 +688,9 @@ function initChatPage() {
     updateUnreadCount(issueId, user.username);
     
     document.getElementById("chatMessage").value = "";
-    render();
+    
+    // Re-render live messages
+    renderLiveMessages();
   });
 }
 
@@ -588,16 +698,59 @@ function updateUnreadCount(issueId, senderUsername) {
   const issues = LS.get("issues") || [];
   const issue = issues.find(i => i.id == issueId);
   if (issue && issue.unreadCount) {
-    // Increment unread count for all other users
+    // Get the sender's role to properly update unread counts
+    const users = LS.get("users") || [];
+    const sender = users.find(u => u.username === senderUsername);
+    
+    if (sender) {
+      // Increment unread count for all other users based on their roles
     if (issue.createdBy !== senderUsername) {
       issue.unreadCount.community = (issue.unreadCount.community || 0) + 1;
     }
     if (issue.councillorUsername !== senderUsername) {
       issue.unreadCount.councillor = (issue.unreadCount.councillor || 0) + 1;
     }
+      if (sender.role !== "municipality") {
     issue.unreadCount.municipality = (issue.unreadCount.municipality || 0) + 1;
-    
+      }
+      
+      LS.set("issues", issues);
+    }
+  }
+}
+
+function resetUnreadCountForUser(issueId, username) {
+  const issues = LS.get("issues") || [];
+  const issue = issues.find(i => i.id == issueId);
+  if (issue && issue.unreadCount) {
+    // Get the user's role to properly reset the unread count
+    const users = LS.get("users") || [];
+    const user = users.find(u => u.username === username);
+    if (user && user.role) {
+      issue.unreadCount[user.role] = 0;
+      LS.set("issues", issues);
+    }
+  }
+}
+
+function ensureUnreadCountStructure(issues) {
+  let needsUpdate = false;
+  
+  issues.forEach(issue => {
+    if (!issue.unreadCount || typeof issue.unreadCount !== 'object') {
+      issue.unreadCount = { community: 0, councillor: 0, municipality: 0 };
+      needsUpdate = true;
+    } else {
+      // Ensure all required properties exist
+      if (typeof issue.unreadCount.community !== 'number') issue.unreadCount.community = 0;
+      if (typeof issue.unreadCount.councillor !== 'number') issue.unreadCount.councillor = 0;
+      if (typeof issue.unreadCount.municipality !== 'number') issue.unreadCount.municipality = 0;
+    }
+  });
+  
+  if (needsUpdate) {
     LS.set("issues", issues);
+    console.log("Fixed unread count structure for issues");
   }
 }
 
@@ -627,6 +780,7 @@ function clearCorruptedData() {
     localStorage.removeItem("issues");
     localStorage.removeItem("chats");
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("appInitialized");
     alert("Corrupted data cleared! Please refresh the page.");
     window.location.reload();
   } catch (error) {

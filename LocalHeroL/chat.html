@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Issue Chat — Local Hero Lite</title>
+  <title>Local Hero Lite — Issue Chat | Community Communication</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
   <link rel="stylesheet" href="style.css" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
@@ -22,18 +23,184 @@
   </header>
 
   <main class="container">
-    <div id="issueMeta" class="card"></div>
+    <!-- Issue Information Card -->
+    <div id="issueMeta" class="card issue-meta">
+      <div class="issue-header">
+        <h4 id="issueTitle">Loading issue...</h4>
+        <span id="issueStatus" class="status-badge">Loading...</span>
+      </div>
+      <div class="issue-details">
+        <p id="issueDescription">Loading description...</p>
+        <div class="issue-meta-grid">
+          <div class="meta-item">
+            <strong>Category:</strong> <span id="issueCategory">-</span>
+          </div>
+          <div class="meta-item">
+            <strong>Ward:</strong> <span id="issueWard">-</span>
+          </div>
+          <div class="meta-item">
+            <strong>Metro:</strong> <span id="issueMetro">-</span>
+          </div>
+          <div class="meta-item">
+            <strong>Reported by:</strong> <span id="issueReporter">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Chat Interface -->
     <div class="card chat">
-      <div id="chatStream" class="chat-stream"></div>
+      <div id="chatHistory" class="chat-history">
+        <!-- Chat messages will be loaded here -->
+        <div class="chat-placeholder">
+          <div class="placeholder-icon">💬</div>
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+      </div>
+      
       <form id="chatForm" class="chat-input">
-        <input id="chatMessage" type="text" placeholder="Type a message..." autocomplete="off" required />
+        <input id="chatMessage" type="text" placeholder="Type your message..." autocomplete="off" required />
         <button class="btn primary" type="submit">Send</button>
       </form>
-      <p class="help">Protocol: Community ↔ Councillor, Councillor ↔ Municipality. Municipality and Community should communicate via the Councillor.</p>
+      
+      <div class="chat-info">
+        <p class="help">
+          <strong>Communication Protocol:</strong><br>
+          • Community ↔ Councillor: Direct communication<br>
+          • Councillor ↔ Municipality: Direct communication<br>
+          • Municipality ↔ Community: Via Councillor only
+        </p>
+      </div>
     </div>
   </main>
 
   <script src="app.js"></script>
+  <script>
+    // Enhanced chat functionality
+    function initChatPage() {
+      const user = LS.get("currentUser");
+      if (!user) return (window.location = "index.html");
+
+      const params = new URLSearchParams(window.location.search);
+      const issueId = params.get("id");
+      if (!issueId) return;
+
+      const chats = LS.get("chats") || {};
+      if (!chats[issueId]) chats[issueId] = [];
+      
+      const chatHistory = document.getElementById("chatHistory");
+      
+      // Reset unread count for current user when they open the chat
+      resetUnreadCountForUser(issueId, user.username);
+      
+      // Load and display issue metadata
+      loadIssueMetadata(issueId);
+      
+      // Render chat messages
+      renderChatMessages();
+      
+      function renderChatMessages() {
+        if (chats[issueId] && chats[issueId].length > 0) {
+          chatHistory.innerHTML = chats[issueId]
+            .map(
+              (m) => {
+                const isUnread = !m.read && m.sender !== user.username;
+                const unreadClass = isUnread ? 'unread' : '';
+                const statusUpdateAttr = m.isStatusUpdate ? 'data-status-update="true"' : '';
+                const msgClass = m.role === 'community' ? 'community' : m.role === 'councillor' ? 'councillor' : 'municipality';
+                
+                return `<div class="msg ${msgClass} ${unreadClass}" ${statusUpdateAttr}>
+                  <div class="msg-header">
+                    <span class="sender">${m.sender}</span>
+                    <span class="role">${m.role}</span>
+                    <span class="time">${new Date(m.ts).toLocaleString()}</span>
+                  </div>
+                  <div class="msg-content">${m.text}</div>
+                </div>`;
+              }
+            )
+            .join("");
+        } else {
+          chatHistory.innerHTML = `
+            <div class="chat-placeholder">
+              <div class="placeholder-icon">💬</div>
+              <p>No messages yet. Start the conversation!</p>
+            </div>
+          `;
+        }
+        
+        // Mark messages as read for current user
+        markMessagesAsRead(issueId, user.username);
+        
+        // Scroll to bottom of chat
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+      }
+      
+      function loadIssueMetadata(issueId) {
+        const issues = LS.get("issues") || [];
+        const issue = issues.find(i => i.id == issueId);
+        
+        if (issue) {
+          document.getElementById("issueTitle").textContent = issue.title;
+          document.getElementById("issueDescription").textContent = issue.description;
+          document.getElementById("issueCategory").textContent = issue.category;
+          document.getElementById("issueWard").textContent = issue.ward;
+          document.getElementById("issueMetro").textContent = issue.metro;
+          document.getElementById("issueReporter").textContent = issue.createdBy;
+          
+          // Set status badge
+          const statusBadge = document.getElementById("issueStatus");
+          statusBadge.textContent = issue.status;
+          statusBadge.className = `status-badge status-${issue.status.toLowerCase().replace(' ', '-')}`;
+        }
+      }
+      
+      function markMessagesAsRead(issueId, username) {
+        const issues = LS.get("issues") || [];
+        const issue = issues.find(i => i.id == issueId);
+        if (issue && issue.unreadCount) {
+          // Get the user's role to properly reset the unread count
+          const users = LS.get("users") || [];
+          const user = users.find(u => u.username === username);
+          if (user && user.role) {
+            issue.unreadCount[user.role] = 0;
+            LS.set("issues", issues);
+          }
+        }
+      }
+      
+      document.getElementById("chatForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const msg = document.getElementById("chatMessage").value;
+        if (!msg.trim()) return;
+        
+        const newMessage = { 
+          sender: user.username, 
+          role: user.role, 
+          text: msg, 
+          ts: Date.now(),
+          read: false 
+        };
+        
+        chats[issueId].push(newMessage);
+        LS.set("chats", chats);
+        
+        // Update unread count for other users
+        updateUnreadCount(issueId, user.username);
+        
+        document.getElementById("chatMessage").value = "";
+        
+        // Re-render chat messages
+        renderChatMessages();
+      });
+    }
+
+    // Override the default initChatPage with our enhanced version
+    document.addEventListener("DOMContentLoaded", function() {
+      if (document.getElementById("chatHistory")) {
+        initChatPage();
+      }
+    });
+  </script>
 </body>
 </html>

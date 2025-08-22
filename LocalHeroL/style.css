@@ -139,3 +139,340 @@ label{font-weight:600;margin-top:8px;margin-bottom:6px;display:block}
   80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
   100%{opacity:0;transform:translate(-50%,-50%) scale(.8)}
 }
+
+/* Enhanced Chat Styles */
+.issue-meta {
+  margin-bottom: 20px;
+}
+
+.issue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.issue-header h4 {
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge:not([class*="status-"]) {
+  background: var(--ghost);
+  color: var(--muted);
+  border: 1px solid var(--ring);
+}
+
+.issue-details p {
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.issue-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.meta-item {
+  padding: 8px 12px;
+  background: var(--ghost);
+  border-radius: 8px;
+  border: 1px solid var(--ring);
+}
+
+.meta-item strong {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meta-item span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Enhanced Chat Stream */
+.chat-stream {
+  min-height: 400px;
+  max-height: 600px;
+  padding: 20px;
+  background: var(--ghost);
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+}
+
+.chat-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.chat-placeholder p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Sample Chat Messages */
+.sample-chat {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.sample-chat.active {
+  display: block;
+}
+
+/* Live Chat Section Header */
+.live-chat-section {
+  margin: 20px 0 10px 0;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  border-radius: 8px;
+}
+
+.live-chat-section h4 {
+  margin: 0 0 8px 0;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.live-chat-section .muted {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Live Chat Messages */
+.live-chat-messages {
+  margin: 10px 0 20px 0;
+  padding: 20px;
+  background: var(--ghost);
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+  min-height: 100px;
+}
+
+.live-chat-messages:empty::before {
+  content: "💬 Live chat messages will appear here when you send messages...";
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  display: block;
+  padding: 20px;
+}
+
+.live-message {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--ring);
+  background: var(--card);
+  position: relative;
+}
+
+.live-message.community {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+  margin-left: 20px;
+}
+
+.live-message.councillor {
+  background: #7c2d12;
+  border-color: #ea580c;
+  margin-right: 20px;
+}
+
+.live-message.municipality {
+  background: #065f46;
+  border-color: #10b981;
+  margin-left: 40px;
+}
+
+.live-message .msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.live-message .sender {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.live-message .role {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.live-message .time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.live-message .msg-content {
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.msg {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--ring);
+  background: var(--card);
+  position: relative;
+}
+
+.msg.community {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+  margin-left: 20px;
+}
+
+.msg.councillor {
+  background: #7c2d12;
+  border-color: #ea580c;
+  margin-right: 20px;
+}
+
+.msg.municipality {
+  background: #065f46;
+  border-color: #10b981;
+  margin-left: 40px;
+}
+
+.msg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.msg .sender {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.msg .role {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.msg .time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.msg-content {
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Chat Input Improvements */
+.chat-input {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  background: var(--ghost);
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.chat-input input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--ring);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.chat-input input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.chat-input button {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Chat Info Section */
+.chat-info {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--ghost);
+  border: 1px solid var(--ring);
+  border-radius: 8px;
+}
+
+.chat-info .help {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .issue-meta-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .msg {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .chat-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .chat-input button {
+    width: 100%;
+  }
+}
